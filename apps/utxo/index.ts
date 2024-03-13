@@ -1,8 +1,10 @@
 import { JSON, Ledger, Context } from "@klave/sdk"
 import { ERC20UTXO } from "./token/ERC20UTXO/ERC20UTXO"
-import { emit } from "./klave/types"
+import { amount, emit } from "./klave/types"
 import { CreateInput } from "./klave/ERC20/ERC20RouteArgs";
-import { TransferInput, MintInput, BurnInput } from "./klave/ERC20UTXO/ERC20UTXORouteArgs";
+import { TransferInput, MintInput, BurnInput, PaymentInput } from "./klave/ERC20UTXO/ERC20UTXORouteArgs";
+import { TxInput, TxOutput } from "./token/ERC20UTXO/IERC20UTXO";
+import { SignInput, sign } from "./klave/crypto";
 
 const ERC20UTXOTable = "ERC20UTXOTable";
 
@@ -121,5 +123,46 @@ export function burn(input: BurnInput): void {
         erc20utxo.createAccount(input.output.owner);
     }        
     erc20utxo.burn(input.amount, input.output, input.data);
+    _saveERC20UTXO(erc20utxo);
+}
+
+/** 
+ * @transaction 
+ * @param {PaymentInput} - A parsed input argument containing the "to" address and the value to be paid
+ *  */
+export function payment(input: PaymentInput): void {
+    let erc20utxo = _loadERC20UTXO();
+    if (input.payer.length == 0) {
+        input.payer = Context.get('sender');
+    }
+    if (!erc20utxo.accountHolder(input.payer) || !erc20utxo.accountHolder(input.payee))
+        return;
+
+    let payer = erc20utxo.account(input.payer);
+    let payee = erc20utxo.account(input.payee);
+
+    if (payer.balance < input.value) {
+        emit(`Insufficient balance on payer's account - ${payer.owner}`);
+        return;    
+    }
+
+    let totalTransferred : amount = 0;
+    for (let i = 0; i < payer.utxoList.length && totalTransferred < input.value; i++) {
+        let toBeTransferred : amount = 0;
+        if (payer.utxoList[i].value > (input.value - totalTransferred)) {
+            toBeTransferred = input.value - totalTransferred;
+        }
+
+        let signInput = new SignInput(payer.owner, payer.utxoList[i].id.toString());
+        let txInput = new TxInput(payer.utxoList[i].id, sign(signInput));
+        let txOutput = new TxOutput(toBeTransferred, input.payee);
+        erc20utxo.transfer(toBeTransferred, txInput, txOutput);        
+
+        totalTransferred += toBeTransferred;
+    }
+    
+    payer.balance -= totalTransferred;
+    payee.balance += totalTransferred;
+
     _saveERC20UTXO(erc20utxo);
 }

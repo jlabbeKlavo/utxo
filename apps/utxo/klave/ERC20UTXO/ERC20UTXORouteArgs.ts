@@ -1,6 +1,6 @@
 import { JSON } from "@klave/sdk"
 import { TxInput, TxOutput } from "../../token/ERC20UTXO/IERC20UTXO";
-import { amount, bytes } from "../../klave/types";
+import { address, amount, bytes } from "../../klave/types";
 
 @serializable
 export class TransferInput {    
@@ -38,5 +38,18 @@ export class BurnInput {
         this.amount = amount;
         this.output = new TxOutput(amount, output.owner);
         this.data = data;
+    }
+}
+
+@serializable
+export class PaymentInput {    
+    value!: amount;
+    payer!: address;    
+    payee!: address;
+
+    constructor(value: amount, input: address, output: address) {
+        this.value = value;
+        this.payer = input;
+        this.payee = output;
     }
 }
