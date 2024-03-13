@@ -19,9 +19,9 @@ export class TransferInput {
 export class MintInput {
     amount!: amount;
     output!: TxOutput; 
-    data!: Uint8Array;
+    data!: bytes;
 
-    constructor(amount: amount, output: TxOutput, data: Uint8Array) {
+    constructor(amount: amount, output: TxOutput, data: bytes) {
         this.amount = amount;
         this.output = new TxOutput(amount, output.owner);
         this.data = data;
@@ -32,9 +32,9 @@ export class MintInput {
 export class BurnInput {
     amount!: amount;
     output!: TxOutput;
-    data!: Uint8Array;
+    data!: bytes;
     
-    constructor(amount: amount, output: TxOutput, data: Uint8Array) {
+    constructor(amount: amount, output: TxOutput, data: bytes) {
         this.amount = amount;
         this.output = new TxOutput(amount, output.owner);
         this.data = data;

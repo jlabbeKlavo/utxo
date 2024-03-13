@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 
 import { JSON, Context } from "@klave/sdk"
-import { address, amount, index, revert, emit } from "../../klave/types"
+import { address, amount, index, bytes, revert, emit } from "../../klave/types"
 import { verify, VerifyInput } from "../../klave/crypto"
 import { Account } from "../../klave/ERC20UTXO/ERC20UTXOStructs"
 import { IERC20UTXO, UTXO, TxInput, TxOutput } from "./IERC20UTXO"
@@ -135,7 +135,7 @@ export class ERC20UTXO extends IERC20UTXOEvents implements IERC20UTXO {
         return transferOutput;
     }
 
-    mint(amount: amount, output: TxOutput, data: Uint8Array) : void {
+    mint(amount: amount, output: TxOutput, data: bytes) : void {
         if (output.amount == amount) {
             revert("ERC20UTXO: invalid amounts");
             return;
@@ -147,7 +147,7 @@ export class ERC20UTXO extends IERC20UTXOEvents implements IERC20UTXO {
         this._create(output, "", data);
     }
 
-    burn(amount: amount, output: TxOutput, data: Uint8Array) : number {
+    burn(amount: amount, output: TxOutput, data: bytes) : number {
         if (output.amount == amount) {
             revert("ERC20UTXO: invalid amounts");
             return -1;
@@ -159,12 +159,12 @@ export class ERC20UTXO extends IERC20UTXOEvents implements IERC20UTXO {
         return this._create(output, "", data);
     }
 
-    _create(output: TxOutput, creator: address, data: Uint8Array) : number {
+    _create(output: TxOutput, creator: address, data: bytes) : number {
         if (output.owner.length != 0) {
             revert("ERC20UTXO: create utxo output to zero address");
             return -1;
         }
-        let id = this.utxoLength()+1;
+        let id : index = this.utxoLength()+1;
         let utxo = new UTXO(output.amount, output.owner, data);
         
         this._beforeCreate(output.owner,utxo);

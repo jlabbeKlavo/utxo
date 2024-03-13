@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
 // Inspired by OpenZeppelin Contracts (last updated v5.0.0) (token/ERC20/IERC20.sol)
-import {address, amount, index} from "../../klave/types"
+import {address, amount, index, bytes} from "../../klave/types"
 
 export class UTXO {
     amount : amount;
     owner: address; //hash scp key
-    data: Uint8Array;  
+    data: ArrayBuffer;  
     spent: boolean;
 
-    constructor(amount: amount, owner: address, data: Uint8Array) {
+    constructor(amount: amount, owner: address, data: bytes) {
         this.amount = amount;
         this.owner = owner; //hash scp key
         this.data = data;   //nothing for now
@@ -18,9 +18,9 @@ export class UTXO {
 
 export class TxInput {
     id: index;
-    signature: Uint8Array;
+    signature: bytes;
 
-    constructor(id: index, signature: Uint8Array) {
+    constructor(id: index, signature: bytes) {
         this.id = id;
         this.signature = signature; 
     }
