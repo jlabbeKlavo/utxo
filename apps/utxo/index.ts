@@ -28,10 +28,28 @@ const _saveERC20UTXO = function(erc20utxo : ERC20UTXO): void {
 export function createCoin(input: CreateInput): void {    
     let erc20utxo_table = Ledger.getTable(ERC20UTXOTable).get("ALL");
     if (erc20utxo_table.length != 0) {
-        emit("Coin already exists");
-        return;
+        let details = JSON.parse<ERC20UTXO>(erc20utxo_table);
+        if (details._name.length != 0 || details._symbol.length != 0 || details._decimals != 0 || details._totalSupply != 0) {
+            emit("Coin already exists");
+            return;
+        }
     }
     let erc20utxo = new ERC20UTXO(input.name, input.symbol, input.decimals, input.totalSupply);    
+    Ledger.getTable(ERC20UTXOTable).set("ALL", JSON.stringify<ERC20UTXO>(erc20utxo));
+    emit("Coin created successfully");
+}
+
+/** 
+ * @transaction 
+ * @param {CreateInput} - A parsed input argument containing the name, symbol, decimals and total supply of the currency
+ *  */
+export function reset(): void {    
+    let erc20utxo_table = Ledger.getTable(ERC20UTXOTable).get("ALL");
+    if (erc20utxo_table.length == 0) {
+        emit("Coin is already empty");
+        return;
+    }
+    let erc20utxo = new ERC20UTXO("", "", 0, 0);    
     Ledger.getTable(ERC20UTXOTable).set("ALL", JSON.stringify<ERC20UTXO>(erc20utxo));
     emit("Coin created successfully");
 }
