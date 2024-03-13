@@ -94,8 +94,8 @@ export class ERC20UTXO extends IERC20UTXOEvents implements IERC20UTXO {
         return this._utxos.length;
     }
 
-    utxo(id: index) : UTXO {
-        if (id < this._utxos.length) {
+    utxo(id: index) : UTXO {                
+        if (Number(id) < this._utxos.length) {
             revert("ERC20UTXO: id out of bound");
         } 
         return this._utxos[id];

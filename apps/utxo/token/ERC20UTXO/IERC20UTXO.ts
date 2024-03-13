@@ -5,7 +5,7 @@ import {address, amount, index, bytes} from "../../klave/types"
 export class UTXO {
     amount : amount;
     owner: address; //hash scp key
-    data: ArrayBuffer;  
+    data: bytes;  
     spent: boolean;
 
     constructor(amount: amount, owner: address, data: bytes) {

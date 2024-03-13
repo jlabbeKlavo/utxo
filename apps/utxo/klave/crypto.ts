@@ -27,7 +27,7 @@ export class VerifyInput {
 }
 
 export function sign(input: SignInput): bytes {
-    let signature = new bytes;
+    let signature : bytes = [];
     const key = Crypto.ECDSA.getKey(input.keyName);
     if(key)
     {

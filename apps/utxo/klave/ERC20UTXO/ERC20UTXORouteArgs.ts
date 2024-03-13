@@ -1,6 +1,6 @@
 import { JSON } from "@klave/sdk"
 import { TxInput, TxOutput } from "../../token/ERC20UTXO/IERC20UTXO";
-import { amount } from "../../klave/types";
+import { amount, bytes } from "../../klave/types";
 
 @serializable
 export class TransferInput {    
