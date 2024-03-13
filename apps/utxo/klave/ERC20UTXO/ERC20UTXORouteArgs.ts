@@ -53,3 +53,25 @@ export class PaymentInput {
         this.payee = output;
     }
 }
+
+@serializable
+export class FundInput {
+    amount!: amount;
+    payee!: address;     
+
+    constructor(amount: amount, payee: address) {
+        this.amount = amount;
+        this.payee = payee;        
+    }
+}
+
+@serializable
+export class DefundInput {
+    amount!: amount;
+    payer!: address;     
+
+    constructor(amount: amount, payer: address) {
+        this.amount = amount;
+        this.payer = payer;
+    }
+}

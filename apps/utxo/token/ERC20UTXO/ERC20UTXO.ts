@@ -140,27 +140,31 @@ export class ERC20UTXO extends IERC20UTXOEvents implements IERC20UTXO {
         return transferOutput;
     }
 
-    mint(amount: amount, output: TxOutput, data: bytes) : void {
-        if (output.amount == amount) {
-            revert("ERC20UTXO: invalid amounts");
-            return;
-        } 
-        this._totalSupply += amount;
-        {
-            this.account(output.owner).balance += amount;
-        }
-        this._create(output, "", data);
-    }
-
-    burn(amount: amount, output: TxOutput, data: bytes) : index {
-        if (output.amount == amount) {
+    mint(amount: amount, output: TxOutput, data: bytes) : index {
+        if (output.amount != amount) {
             revert("ERC20UTXO: invalid amounts");
             return -1;
         } 
-        this._totalSupply -= amount;
-        {
-            this.account(output.owner).balance -= amount;
+        this._totalSupply += amount;        
+        this.account(output.owner).balance += amount;        
+        return this._create(output, "", data);
+    }
+
+    burn(amount: amount, output: TxOutput, data: bytes) : index {
+        if (output.amount != amount) {
+            revert("ERC20UTXO: invalid amounts");
+            return -1;
+        } 
+        if (this._totalSupply < amount) {
+            revert("ERC20UTXO: insufficient supply");
+            return -1;
         }
+        if (this.account(output.owner).balance < amount) {
+            revert("ERC20UTXO: insufficient balance");
+            return -1;
+        }
+        this._totalSupply -= amount;        
+        this.account(output.owner).balance -= amount;        
         return this._create(output, "", data);
     }
 

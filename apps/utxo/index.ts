@@ -1,8 +1,8 @@
 import { JSON, Ledger, Context } from "@klave/sdk"
 import { ERC20UTXO } from "./token/ERC20UTXO/ERC20UTXO"
-import { amount, emit } from "./klave/types"
+import { amount, bytes, emit } from "./klave/types"
 import { CreateInput } from "./klave/ERC20/ERC20RouteArgs";
-import { TransferInput, MintInput, BurnInput, PaymentInput } from "./klave/ERC20UTXO/ERC20UTXORouteArgs";
+import { TransferInput, MintInput, BurnInput, PaymentInput, FundInput, DefundInput } from "./klave/ERC20UTXO/ERC20UTXORouteArgs";
 import { TxInput, TxOutput } from "./token/ERC20UTXO/IERC20UTXO";
 import { SignInput, sign } from "./klave/crypto";
 
@@ -144,6 +144,8 @@ export function burn(input: BurnInput): void {
     _saveERC20UTXO(erc20utxo);
 }
 
+
+
 /** 
  * @transaction 
  * @param {PaymentInput} - A parsed input argument containing the "to" address and the value to be paid
@@ -182,5 +184,39 @@ export function payment(input: PaymentInput): void {
     payer.balance -= totalTransferred;
     payee.balance += totalTransferred;
 
+    _saveERC20UTXO(erc20utxo);
+}
+
+/**
+ * @transaction create new tokens and assign them to the specified address
+ * @param {MintInput} - A parsed input argument containing the address of the recipient and the amount of tokens to be created
+ */
+export function fund(input: FundInput): void {
+    let erc20utxo = _loadERC20UTXO();
+    if (input.payee.length == 0) {
+        input.payee = Context.get('sender');        
+    }
+    if (!erc20utxo.accountHolder(input.payee)) {
+        erc20utxo.createAccount(input.payee);
+    }            
+    let data: bytes = [];
+    erc20utxo.mint(input.amount, new TxOutput(input.amount, input.payee), data);
+    _saveERC20UTXO(erc20utxo);
+}
+
+/**
+ * @transaction Destroy tokens from the specified address
+ * @param {BurnInput} - A parsed input argument containing the address of the sender and the amount of tokens to be destroyed
+ */
+export function defund(input: DefundInput): void {
+    let erc20utxo = _loadERC20UTXO();
+    if (input.payer.length == 0) {
+        input.payer = Context.get('sender');        
+    }
+    if (!erc20utxo.accountHolder(input.payer)) {
+        erc20utxo.createAccount(input.payer);
+    }            
+    let data: bytes = [];
+    erc20utxo.burn(input.amount, new TxOutput(input.amount, input.payer), data);
     _saveERC20UTXO(erc20utxo);
 }
