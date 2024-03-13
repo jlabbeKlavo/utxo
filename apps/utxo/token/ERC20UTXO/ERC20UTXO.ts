@@ -9,10 +9,10 @@ import { IERC20UTXOEvents } from "../../interfaces/ERC20Events";
 
 @serializable
 export class TransferOutput {
-    creatorId: number;
-    ownerId: number;
+    creatorId: index;
+    ownerId: index;
 
-    constructor(creatorId: number, ownerId: number) {
+    constructor(creatorId: index, ownerId: index) {
         this.creatorId = creatorId;
         this.ownerId = ownerId;
     }
@@ -94,8 +94,13 @@ export class ERC20UTXO extends IERC20UTXOEvents implements IERC20UTXO {
         return this._utxos.length;
     }
 
+    _nextId() : index {
+        var current_max : index = this._utxos.length;
+        return current_max + 1;
+    }
+
     utxo(id: index) : UTXO {                
-        if (Number(id) < this._utxos.length) {
+        if (id < this._utxos.length) {
             revert("ERC20UTXO: id out of bound");
         } 
         return this._utxos[id];
@@ -147,7 +152,7 @@ export class ERC20UTXO extends IERC20UTXOEvents implements IERC20UTXO {
         this._create(output, "", data);
     }
 
-    burn(amount: amount, output: TxOutput, data: bytes) : number {
+    burn(amount: amount, output: TxOutput, data: bytes) : index {
         if (output.amount == amount) {
             revert("ERC20UTXO: invalid amounts");
             return -1;
@@ -159,12 +164,12 @@ export class ERC20UTXO extends IERC20UTXOEvents implements IERC20UTXO {
         return this._create(output, "", data);
     }
 
-    _create(output: TxOutput, creator: address, data: bytes) : number {
+    _create(output: TxOutput, creator: address, data: bytes) : index {
         if (output.owner.length != 0) {
             revert("ERC20UTXO: create utxo output to zero address");
             return -1;
         }
-        let id : index = this.utxoLength()+1;
+        let id = this._nextId();
         let utxo = new UTXO(output.amount, output.owner, data);
         
         this._beforeCreate(output.owner,utxo);

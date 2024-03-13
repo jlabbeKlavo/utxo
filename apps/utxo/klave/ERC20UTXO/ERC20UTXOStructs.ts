@@ -13,7 +13,7 @@ export class UTXO {
 }
 
 @serializable
-export class Account {        
+export class Account {
     owner: address;
     balance: amount;
     utxoList: Array<UTXO>;
