@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 
 import { JSON, Context } from "@klave/sdk"
-import { address, amount, revert, emit } from "../../klave/types"
+import { address, amount, index, revert, emit } from "../../klave/types"
 import { verify, VerifyInput } from "../../klave/crypto"
 import { Account } from "../../klave/ERC20UTXO/ERC20UTXOStructs"
 import { IERC20UTXO, UTXO, TxInput, TxOutput } from "./IERC20UTXO"
@@ -94,7 +94,7 @@ export class ERC20UTXO extends IERC20UTXOEvents implements IERC20UTXO {
         return this._utxos.length;
     }
 
-    utxo(id: number) : UTXO {
+    utxo(id: index) : UTXO {
         if (id < this._utxos.length) {
             revert("ERC20UTXO: id out of bound");
         } 
@@ -110,7 +110,6 @@ export class ERC20UTXO extends IERC20UTXOEvents implements IERC20UTXO {
 
     _transfer(amount: amount, input: TxInput, output: TxOutput, creator: address) : TransferOutput {
         let transferOutput = new TransferOutput(0, 0);
-
         let cache = this._utxos[input.id];
         if (output.amount <= cache.amount) {
             revert("ERC20UTXO: transfer amount exceeds utxo amount");
@@ -205,13 +204,13 @@ export class ERC20UTXO extends IERC20UTXOEvents implements IERC20UTXO {
 
     _beforeCreate(owner: address, utxo: UTXO) : void {}
 
-    _afterCreate(owner: address, utxo: UTXO, id: number) : void {
+    _afterCreate(owner: address, utxo: UTXO, id: index) : void {
         this.account(owner).addToUTXOList(id, utxo.amount);
     }
 
     _beforeSpend(spender: address, utxo: UTXO) : void {}
 
-    _afterSpend(spender: address, utxo: UTXO, id: number) : void {
+    _afterSpend(spender: address, utxo: UTXO, id: index) : void {
         this.account(spender).removeFromUTXOList(id);
     }
     

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 // Inspired by OpenZeppelin Contracts (last updated v5.0.0) (token/ERC20/IERC20.sol)
-import {address, amount} from "../../klave/types"
+import {address, amount, index} from "../../klave/types"
 
 export class UTXO {
     amount : amount;
@@ -17,10 +17,10 @@ export class UTXO {
 };
 
 export class TxInput {
-    id: number;
+    id: index;
     signature: Uint8Array;
 
-    constructor(id: number, signature: Uint8Array) {
+    constructor(id: index, signature: Uint8Array) {
         this.id = id;
         this.signature = signature; 
     }
@@ -54,7 +54,7 @@ export interface IERC20UTXO {
     /**
      * @dev Check UTXO status   
      */
-    utxo(id: number) : UTXO;
+    utxo(id: index) : UTXO;
 
     /**
      * @dev Returns the number of UTXOs

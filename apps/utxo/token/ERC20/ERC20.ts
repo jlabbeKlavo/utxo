@@ -35,7 +35,7 @@ import {IERC20Events} from "../../interfaces/ERC20Events";
 export class ERC20 extends IERC20Events implements IERC20, IERC20Metadata {
     _accounts: Array<Account>;    
 
-    _decimals: u8;
+    _decimals: number;
     _totalSupply: amount;
     _name: string;
     _symbol: string;
@@ -46,7 +46,7 @@ export class ERC20 extends IERC20Events implements IERC20, IERC20Metadata {
      * All two of these values are immutable: they can only be set once during
      * construction.
      */
-    constructor(name_: string, symbol_: string, decimals_: u8, totalSupply_: amount) {
+    constructor(name_: string, symbol_: string, decimals_: number, totalSupply_: amount) {
         super();
         this._name = name_;
         this._symbol = symbol_;
@@ -83,7 +83,7 @@ export class ERC20 extends IERC20Events implements IERC20, IERC20Metadata {
      * no way affects any of the arithmetic of the contract, including
      * {IERC20-balanceOf} and {IERC20-transfer}.
      */
-    decimals() : u8 {
+    decimals() : number {
         return this._decimals;
     }
 

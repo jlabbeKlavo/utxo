@@ -1,5 +1,5 @@
 import {JSON} from "@klave/sdk"
-import {address, amount} from "../../klave/types"
+import {address, amount, index} from "../../klave/types"
 
 
 @serializable
@@ -25,7 +25,7 @@ export class Account {
         this.allowance = new Array<Allowance>();
     }
 
-    findAllowance(spender: address): number {
+    findAllowance(spender: address): index {
         for (let i = 0; i < this.allowance.length; i++) {
             if (this.allowance[i].spender == spender) {
                 return i;

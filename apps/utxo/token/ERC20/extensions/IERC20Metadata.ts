@@ -18,5 +18,5 @@ export interface IERC20Metadata extends IERC20 {
     /**
      * @dev Returns the decimals places of the token.
      */
-    decimals() : string;
+    decimals() : number;
 }

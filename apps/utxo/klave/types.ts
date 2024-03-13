@@ -3,6 +3,7 @@ import {Notifier, JSON} from "@klave/sdk"
 export type address = string
 export type error = string
 export type amount = u64
+export type index = i32
 
 @serializable
 export class ErrorMessage {

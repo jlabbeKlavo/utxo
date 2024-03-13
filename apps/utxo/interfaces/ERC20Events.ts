@@ -1,5 +1,5 @@
 import {IERC20Errors} from "../interfaces/draft-IERC6093";
-import {address, amount} from "../klave/types"
+import {address, amount, index} from "../klave/types"
 
 export class IERC20Events extends IERC20Errors {
     /**
@@ -28,7 +28,7 @@ export class IERC20UTXOEvents extends IERC20Events {
      *
      * Note that `value` may be zero.
      */
-    UTXOCreated(id: number, creator: address) : string {
+    UTXOCreated(id: index, creator: address) : string {
         return `UTXO ${id} by ${creator} is successfully created`;
     }
 
@@ -36,7 +36,7 @@ export class IERC20UTXOEvents extends IERC20Events {
      * @dev Emitted when the allowance of a `spender` for an `owner` is set by
      * a call to {approve}. `value` is the new allowance.
      */
-    UTXOSpent(id: number, spender: address) : string {
+    UTXOSpent(id: index, spender: address) : string {
         return `UTXO ${id} is successfully spent by ${spender}`;
     }
 }
