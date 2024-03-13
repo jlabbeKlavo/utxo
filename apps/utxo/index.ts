@@ -189,7 +189,7 @@ export function payment(input: PaymentInput): void {
 
 /**
  * @transaction create new tokens and assign them to the specified address
- * @param {MintInput} - A parsed input argument containing the address of the recipient and the amount of tokens to be created
+ * @param {FundInput} - A parsed input argument containing the address of the recipient and the amount of tokens to be created
  */
 export function fund(input: FundInput): void {
     let erc20utxo = _loadERC20UTXO();
@@ -206,7 +206,7 @@ export function fund(input: FundInput): void {
 
 /**
  * @transaction Destroy tokens from the specified address
- * @param {BurnInput} - A parsed input argument containing the address of the sender and the amount of tokens to be destroyed
+ * @param {DefundInput} - A parsed input argument containing the address of the sender and the amount of tokens to be destroyed
  */
 export function defund(input: DefundInput): void {
     let erc20utxo = _loadERC20UTXO();
