@@ -125,16 +125,16 @@ export class ERC20UTXO extends IERC20UTXOEvents implements IERC20UTXO {
             let value = cache.amount - output.amount;
             this._spend(input, creator);
             {
-                this.account(creator).balance -= value;   
-                this.account(output.owner).balance += amount;
+                this.removeFromBalance(creator, amount);
+                this.addToBalance(output.owner, amount);
             }
             transferOutput.ownerId = this._create(output, creator, cache.data);
             transferOutput.creatorId = this._create(new TxOutput(value, creator), creator, cache.data);
         } else {
             this._spend(input,creator);
             {
-                this.account(creator).balance -= amount;   
-                this.account(output.owner).balance += amount;
+                this.removeFromBalance(creator, amount);
+                this.addToBalance(output.owner, amount);
             }
             transferOutput.ownerId = this._create(output, creator, cache.data);
         }
@@ -147,7 +147,7 @@ export class ERC20UTXO extends IERC20UTXOEvents implements IERC20UTXO {
             return -1;
         } 
         this._totalSupply += amount;        
-        this.account(output.owner).balance += amount;        
+        this.addToBalance(output.owner, amount);
         return this._create(output, "", data);
     }
 
@@ -165,7 +165,7 @@ export class ERC20UTXO extends IERC20UTXOEvents implements IERC20UTXO {
             return -1;
         }
         this._totalSupply -= amount;        
-        this.account(output.owner).balance -= amount;        
+        this.removeFromBalance(output.owner, amount);
         return this._create(output, "", data);
     }
 
@@ -199,12 +199,11 @@ export class ERC20UTXO extends IERC20UTXOEvents implements IERC20UTXO {
         }
 
         this._beforeSpend(utxo.owner,utxo);
-
         
-        if (!verify(new VerifyInput(utxo.owner, input.id.toString(), input.signature))) {
-            revert("ERC20UTXO: invalid signature");
-            return;
-        }
+        // if (!verify(new VerifyInput(utxo.owner, input.id.toString(), input.signature))) {
+        //     revert("ERC20UTXO: invalid signature");
+        //     return;
+        // }
 
         this._utxos[input.id].spent = true;
         emit(this.UTXOSpent(input.id, spender));
@@ -215,21 +214,13 @@ export class ERC20UTXO extends IERC20UTXOEvents implements IERC20UTXO {
     _beforeCreate(owner: address, utxo: UTXO) : void {}
 
     _afterCreate(owner: address, utxo: UTXO, id: index) : void {
-        let index = this.findAccount(owner);
-        if (index != -1) {
-            this._accounts[index].utxoList.push(new UTXOBrief(id, utxo.amount));
-            emit(`UTXO for ${owner} successfully added to account`);
-        }
+        this.addUTXOtoAccount(owner, utxo, id);
     }
 
     _beforeSpend(spender: address, utxo: UTXO) : void {}
 
     _afterSpend(spender: address, utxo: UTXO, id: index) : void {
-        let index = this.findAccount(spender);
-        if (index != -1) {
-            this._accounts[index].utxoList.splice(id, 1);
-            emit(`UTXO for ${spender} successfully removed from account`);
-        }
+        this.removeUTXOfromAccount(spender, id);
     }
     
     /**
@@ -272,4 +263,35 @@ export class ERC20UTXO extends IERC20UTXOEvents implements IERC20UTXO {
         emit(`Account for ${account} successfully created`);
     }
 
+    addUTXOtoAccount(owner: address, utxo: UTXO, id: index) : void {
+        let index = this.findAccount(owner);
+        if (index != -1) {
+            this._accounts[index].utxoList.push(new UTXOBrief(id, utxo.amount));
+            emit(`UTXO for ${owner} successfully added to account`);
+        }
+    }
+
+    removeUTXOfromAccount(spender: address, id: index) : void {
+        let index = this.findAccount(spender);
+        if (index != -1) {
+            this._accounts[index].utxoList.splice(id, 1);
+            emit(`UTXO for ${spender} successfully removed from account`);
+        }
+    }
+
+    addToBalance(account: address, amount: amount) : void {
+        let index = this.findAccount(account);
+        if (index != -1) {
+            this._accounts[index].balance += amount;
+            emit(`Balance for ${account} successfully added`);
+        }
+    }
+
+    removeFromBalance(account: address, amount: amount) : void {
+        let index = this.findAccount(account);
+        if (index != -1) {
+            this._accounts[index].balance -= amount;
+            emit(`Balance for ${account} successfully removed`);
+        }
+    }
 }
