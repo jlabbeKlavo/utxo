@@ -200,10 +200,10 @@ export class ERC20UTXO extends IERC20UTXOEvents implements IERC20UTXO {
 
         this._beforeSpend(utxo.owner,utxo);
         
-        // if (!verify(new VerifyInput(utxo.owner, input.id.toString(), input.signature))) {
-        //     revert("ERC20UTXO: invalid signature");
-        //     return;
-        // }
+        if (!verify(new VerifyInput(utxo.owner, input.id.toString(), input.signature))) {
+            revert("ERC20UTXO: invalid signature");
+            return;
+        }
 
         this._utxos[input.id].spent = true;
         emit(this.UTXOSpent(input.id, spender));
