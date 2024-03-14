@@ -96,7 +96,7 @@ export class ERC20UTXO extends IERC20UTXOEvents implements IERC20UTXO {
 
     _nextId() : index {
         var current_max : index = this._utxos.length;
-        return current_max + 1;
+        return current_max;
     }
 
     utxo(id: index) : UTXO {                
@@ -174,7 +174,7 @@ export class ERC20UTXO extends IERC20UTXOEvents implements IERC20UTXO {
             revert("ERC20UTXO: create utxo output to zero address");
             return -1;
         }
-        let id = this.utxoLength();
+        let id = this._nextId();
         let utxo = new UTXO(output.amount, output.owner, data);
         
         this._beforeCreate(output.owner,utxo);
