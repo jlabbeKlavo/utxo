@@ -191,7 +191,7 @@ export function payment(input: PaymentInput): void {
 
         emit(`on iteration ${i}, toBeTransferred is ${toBeTransferred} when totalTransferred is ${totalTransferred}. Reminder: input.value is ${input.value}`);
         let signInput = new SignInput(payer.owner, payer.utxoList[i].id.toString());
-        emit(`Sign input is ${JSON.stringify(signInput)}`);
+        emit(`Sign input is ${JSON.stringify(signInput)}`);        
         let txInput = new TxInput(payer.utxoList[i].id, sign(signInput));
         let txOutput = new TxOutput(toBeTransferred, input.payee);
         erc20utxo.transfer(toBeTransferred, txInput, txOutput);        
@@ -214,7 +214,7 @@ export function fund(input: FundInput): void {
     if (!erc20utxo.accountHolder(input.payee)) {
         erc20utxo.createAccount(input.payee);
     }            
-    let data: bytes = [];
+    let data: bytes = new Uint8Array(0);
     erc20utxo.mint(input.amount, new TxOutput(input.amount, input.payee), data);
     _saveERC20UTXO(erc20utxo);
 }
@@ -231,7 +231,7 @@ export function defund(input: DefundInput): void {
     if (!erc20utxo.accountHolder(input.payer)) {
         erc20utxo.createAccount(input.payer);
     }            
-    let data: bytes = [];
+    let data: bytes = new Uint8Array(0);
     erc20utxo.burn(input.amount, new TxOutput(input.amount, input.payer), data);
     _saveERC20UTXO(erc20utxo);
 }

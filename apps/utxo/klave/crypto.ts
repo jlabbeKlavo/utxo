@@ -1,6 +1,7 @@
 import { JSON, Crypto } from "@klave/sdk";
 import { convertToBytes, convertToU8Array } from "./helpers";
-import { bytes } from "./types";
+import { bytes, b64, emit } from "./types";
+import { encode as b64encode, decode as b64decode } from 'as-base64/assembly';
 
 @serializable
 export class SignInput {
@@ -17,21 +18,27 @@ export class SignInput {
 export class VerifyInput {
     keyName: string;
     message: string;
-    signature: bytes;
+    signature: b64;
 
-    constructor(keyName: string, message: string, signature: bytes) {
+    constructor(keyName: string, message: string, signature: b64) {
         this.keyName = keyName;
         this.message = message;
         this.signature = signature;
     }
 }
 
-export function sign(input: SignInput): bytes {
-    let signature : bytes = [];
+export function sign(input: SignInput): b64 {
+    let signature : b64 = "";
     const key = Crypto.ECDSA.getKey(input.keyName);
     if(key)
     {
-        signature = convertToBytes(key.sign(input.message));
+        emit(`Signing message: ${input.message} - with key: ${input.keyName}`);
+        let signatureU8 = key.sign(input.message);
+        if (signatureU8) {
+            let signatureBytes = convertToBytes(signatureU8);
+            signature = b64encode(signatureBytes);
+            emit(`Signature: ${signature}`);            
+        }        
     }
     return signature;
 }
@@ -39,7 +46,8 @@ export function sign(input: SignInput): bytes {
 export function verify(input: VerifyInput): boolean {
     const key = Crypto.ECDSA.getKey(input.keyName);
     if (key) {        
-        return key.verify(input.message, convertToU8Array(input.signature));
+        let signatureAsBytes = b64decode(input.signature);
+        return key.verify(input.message, convertToU8Array(signatureAsBytes));
     } 
     return false;
 }

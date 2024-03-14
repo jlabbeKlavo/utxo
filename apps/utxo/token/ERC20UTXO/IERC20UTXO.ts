@@ -21,9 +21,9 @@ export class UTXO {
 @serializable
 export class TxInput {
     id: index;
-    signature: bytes;
+    signature: string;
 
-    constructor(id: index, signature: bytes) {
+    constructor(id: index, signature: string) {
         this.id = id;
         this.signature = signature; 
     }

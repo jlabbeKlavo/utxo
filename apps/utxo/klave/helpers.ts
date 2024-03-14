@@ -9,7 +9,7 @@ export function convertToU8Array(input: bytes): u8[] {
 }
 
 export function convertToBytes(input: u8[]): bytes {
-    let value: bytes = [];
+    let value: bytes = new Uint8Array(input.length);
     for (let i = 0; i < input.length; ++i) {
         value[i] = input[i];
     }
