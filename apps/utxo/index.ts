@@ -14,11 +14,14 @@ const _loadERC20UTXO = function(): ERC20UTXO {
         emit("Coin does not exists. Create it first");
         return new ERC20UTXO("", "", 0, 0);
     }    
+    emit("ERC20UTXO loaded successfully: " + erc20utxo_table);
     return JSON.parse<ERC20UTXO>(erc20utxo_table);
 }
 
 const _saveERC20UTXO = function(erc20utxo : ERC20UTXO): void {
-    Ledger.getTable(ERC20UTXOTable).set("ALL", JSON.stringify<ERC20UTXO>(erc20utxo));
+    let erc20utxo_table = JSON.stringify<ERC20UTXO>(erc20utxo);    
+    Ledger.getTable(ERC20UTXOTable).set("ALL", erc20utxo_table);
+    emit("ERC20UTXO saved successfully: " + erc20utxo_table);
 }
 
 /** 
