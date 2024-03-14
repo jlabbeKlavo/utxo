@@ -191,6 +191,7 @@ export function payment(input: PaymentInput): void {
 
         emit(`on iteration ${i}, toBeTransferred is ${toBeTransferred} when totalTransferred is ${totalTransferred}. Reminder: input.value is ${input.value}`);
         let signInput = new SignInput(payer.owner, payer.utxoList[i].id.toString());
+        emit(`Sign input is ${JSON.stringify(signInput)}`);
         let txInput = new TxInput(payer.utxoList[i].id, sign(signInput));
         let txOutput = new TxOutput(toBeTransferred, input.payee);
         erc20utxo.transfer(toBeTransferred, txInput, txOutput);        

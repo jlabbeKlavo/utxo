@@ -199,8 +199,11 @@ export class ERC20UTXO extends IERC20UTXOEvents implements IERC20UTXO {
         }
 
         this._beforeSpend(utxo.owner,utxo);
-        
-        if (!verify(new VerifyInput(utxo.owner, input.id.toString(), input.signature))) {
+                
+        let verifyInput = new VerifyInput(utxo.owner, input.id.toString(), input.signature);
+        emit(`verifyInput: ${JSON.stringify(verifyInput)}`);
+
+        if (!verify(verifyInput)) {
             revert("ERC20UTXO: invalid signature");
             return;
         }
