@@ -169,7 +169,7 @@ export class ERC20UTXO extends IERC20UTXOEvents implements IERC20UTXO {
     }
 
     _create(output: TxOutput, creator: address, data: bytes) : index {
-        if (output.owner.length != 0) {
+        if (output.owner.length == 0) {
             revert("ERC20UTXO: create utxo output to zero address");
             return -1;
         }
