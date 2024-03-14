@@ -147,8 +147,6 @@ export function burn(input: BurnInput): void {
     _saveERC20UTXO(erc20utxo);
 }
 
-
-
 /** 
  * @transaction 
  * @param {PaymentInput} - A parsed input argument containing the "to" address and the value to be paid
@@ -162,7 +160,7 @@ export function payment(input: PaymentInput): void {
         emit(`Payer and payee cannot be the same`);
         return;
     }
-    
+
     if (!erc20utxo.accountHolder(input.payer)) {
         emit(`Account for ${input.payer} does not exist`);
         return;
