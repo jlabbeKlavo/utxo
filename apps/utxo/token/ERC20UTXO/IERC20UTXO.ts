@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 // Inspired by OpenZeppelin Contracts (last updated v5.0.0) (token/ERC20/IERC20.sol)
+import { JSON } from "@klave/sdk";
 import {address, amount, index, bytes} from "../../klave/types"
 
 @serializable
