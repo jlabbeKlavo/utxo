@@ -52,3 +52,12 @@ export function verify(input: VerifyInput): boolean {
     } 
     return false;
 }
+
+export function generateNewEncryptionKey(keyName: string): void {
+    const key = Crypto.AES.generateKey(keyName);
+    if (key) {
+        emit(`SUCCESS: Key '${keyName}' has been generated`);
+    } else {
+        emit(`ERROR: Key '${keyName}' has not been generated`);
+    }
+}
