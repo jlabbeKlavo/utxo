@@ -115,7 +115,7 @@ export class ERC20UTXO extends IERC20UTXOEvents implements IERC20UTXO {
 
     _transfer(amount: amount, input: TxInput, output: TxOutput, creator: address) : TransferOutput {
         let transferOutput = new TransferOutput(0, 0);        
-        let cache = this._utxos[input.id-1];
+        let cache = this._utxos[input.id];
         emit(`cache amount: ${cache.amount}`);
         if (output.amount > cache.amount) {
             revert("ERC20UTXO: transfer amount exceeds utxo amount");
@@ -174,7 +174,7 @@ export class ERC20UTXO extends IERC20UTXOEvents implements IERC20UTXO {
             revert("ERC20UTXO: create utxo output to zero address");
             return -1;
         }
-        let id = this._nextId();
+        let id = this.utxoLength();
         let utxo = new UTXO(output.amount, output.owner, data);
         
         this._beforeCreate(output.owner,utxo);
