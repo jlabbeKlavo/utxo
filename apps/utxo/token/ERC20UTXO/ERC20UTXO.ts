@@ -214,23 +214,41 @@ export class ERC20UTXO extends IERC20UTXOEvents implements IERC20UTXO {
     _beforeCreate(owner: address, utxo: UTXO) : void {}
 
     _afterCreate(owner: address, utxo: UTXO, id: index) : void {
-        this.account(owner).addToUTXOList(id, utxo.amount);
+        let index = this.findAccount(owner);
+        if (index != -1) {
+            this._accounts[index].addToUTXOList(id, utxo.amount);
+        }
     }
 
     _beforeSpend(spender: address, utxo: UTXO) : void {}
 
     _afterSpend(spender: address, utxo: UTXO, id: index) : void {
-        this.account(spender).removeFromUTXOList(id);
+        let index = this.findAccount(spender);
+        if (index != -1) {
+            this._accounts[index].removeFromUTXOList(id);
+        }
     }
     
     /**
      * @dev Returns the account associated with `account`.
      */
-    account(account: address) : Account {
+    findAccount(account: address) : index {
         for (let i = 0; i < this._accounts.length; i++) {
             if (this._accounts[i].owner == account) {
-                return this._accounts[i];
+                return i;
             }
+        }
+        emit(`Account for ${account} does not exist`)
+        return -1;
+    }
+
+    /**
+     * @dev Returns the account associated with `account`.
+     */
+    account(account: address) : Account {
+        let index = this.findAccount(account);
+        if (index != -1) {
+            return this._accounts[index];
         }
         emit(`Account for ${account} does not exist`)
         return new Account("", 0);
