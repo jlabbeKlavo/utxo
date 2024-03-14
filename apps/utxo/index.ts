@@ -156,8 +156,13 @@ export function burn(input: BurnInput): void {
 export function payment(input: PaymentInput): void {
     let erc20utxo = _loadERC20UTXO();
     if (input.payer.length == 0) {
-        input.payer = Context.get('sender');
+        input.payer = Context.get('sender');        
     }
+    if (input.payer == input.payee) {
+        emit(`Payer and payee cannot be the same`);
+        return;
+    }
+    
     if (!erc20utxo.accountHolder(input.payer)) {
         emit(`Account for ${input.payer} does not exist`);
         return;
