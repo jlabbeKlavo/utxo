@@ -1,6 +1,6 @@
 import { JSON, Ledger, Context } from "@klave/sdk"
 import { ERC20UTXO } from "./token/ERC20UTXO/ERC20UTXO"
-import { amount, bytes, emit } from "./klave/types"
+import { amount, emit } from "./klave/types"
 import { CreateInput } from "./klave/ERC20/ERC20RouteArgs";
 import { TransferInput, MintInput, BurnInput, PaymentInput, FundInput, DefundInput } from "./klave/ERC20UTXO/ERC20UTXORouteArgs";
 import { TxInput, TxOutput } from "./token/ERC20UTXO/IERC20UTXO";
@@ -191,6 +191,7 @@ export function payment(input: PaymentInput): void {
 
         emit(`on iteration ${i}, toBeTransferred is ${toBeTransferred} when totalTransferred is ${totalTransferred}. Reminder: input.value is ${input.value}`);
         let signInput = new SignInput(payer.owner, payer.utxoList[i].id.toString());
+        emit(`Sign input is ${JSON.stringify(signInput)}`);        
         let txInput = new TxInput(payer.utxoList[i].id, sign(signInput));
         let txOutput = new TxOutput(toBeTransferred, input.payee);
         erc20utxo.transfer(toBeTransferred, txInput, txOutput);        
@@ -212,9 +213,8 @@ export function fund(input: FundInput): void {
     }
     if (!erc20utxo.accountHolder(input.payee)) {
         erc20utxo.createAccount(input.payee);
-    }            
-    let data: bytes = [];
-    erc20utxo.mint(input.amount, new TxOutput(input.amount, input.payee), data);
+    }                
+    erc20utxo.mint(input.amount, new TxOutput(input.amount, input.payee), "data");
     _saveERC20UTXO(erc20utxo);
 }
 
@@ -229,8 +229,7 @@ export function defund(input: DefundInput): void {
     }
     if (!erc20utxo.accountHolder(input.payer)) {
         erc20utxo.createAccount(input.payer);
-    }            
-    let data: bytes = [];
-    erc20utxo.burn(input.amount, new TxOutput(input.amount, input.payer), data);
+    }                
+    erc20utxo.burn(input.amount, new TxOutput(input.amount, input.payer), "data");
     _saveERC20UTXO(erc20utxo);
 }
