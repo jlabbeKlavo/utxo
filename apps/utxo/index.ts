@@ -155,24 +155,35 @@ export function payment(input: PaymentInput): void {
     if (input.payer.length == 0) {
         input.payer = Context.get('sender');
     }
-    if (!erc20utxo.accountHolder(input.payer) || !erc20utxo.accountHolder(input.payee))
+    if (!erc20utxo.accountHolder(input.payer)) {
+        emit(`Account for ${input.payer} does not exist`);
         return;
-
+    }
+    if (!erc20utxo.accountHolder(input.payee)) {
+        emit(`Account for ${input.payee} does not exist`);
+        return;
+    }
+        
     let payer = erc20utxo.account(input.payer);
     let payee = erc20utxo.account(input.payee);
-
+    
     if (payer.balance < input.value) {
         emit(`Insufficient balance on payer's account - ${payer.owner}`);
         return;    
     }
 
-    let totalTransferred : amount = 0;
+    emit(`Payer's balance is ${payer.balance} and payee's balance is ${payee.balance}`);
+    emit(`Payment of ${input.value} from ${payer.owner} to ${payee.owner}`);
+
+    let totalTransferred : amount = 0;    
+    emit(`At first, total transferred is ${totalTransferred}, payer has ${payer.utxoList.length} UTXOs and payee has ${payee.utxoList.length} UTXOs`);
     for (let i = 0; i < payer.utxoList.length && totalTransferred < input.value; i++) {
         let toBeTransferred : amount = 0;
         if (payer.utxoList[i].value > (input.value - totalTransferred)) {
             toBeTransferred = input.value - totalTransferred;
         }
 
+        emit(`on iteration ${i}, toBeTransferred is ${toBeTransferred} when totalTransferred is ${totalTransferred}. Reminder: input.value is ${input.value}`);
         let signInput = new SignInput(payer.owner, payer.utxoList[i].id.toString());
         let txInput = new TxInput(payer.utxoList[i].id, sign(signInput));
         let txOutput = new TxOutput(toBeTransferred, input.payee);
@@ -180,10 +191,7 @@ export function payment(input: PaymentInput): void {
 
         totalTransferred += toBeTransferred;
     }
-    
-    payer.balance -= totalTransferred;
-    payee.balance += totalTransferred;
-
+    emit(`Finally, total transferred is ${totalTransferred}`);
     _saveERC20UTXO(erc20utxo);
 }
 
