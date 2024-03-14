@@ -1,16 +1,15 @@
 // SPDX-License-Identifier: MIT
 // Inspired by OpenZeppelin Contracts (last updated v5.0.0) (token/ERC20/IERC20.sol)
 import { JSON } from "@klave/sdk";
-import {address, amount, index, bytes} from "../../klave/types"
-
+import {address, amount, index} from "../../klave/types"
 @serializable
 export class UTXO {
     amount : amount;
     owner: address; //hash scp key
-    data: bytes;  
+    data: string;  
     spent: boolean;
 
-    constructor(amount: amount, owner: address, data: bytes) {
+    constructor(amount: amount, owner: address, data: string) {
         this.amount = amount;
         this.owner = owner; //hash scp key
         this.data = data;   //nothing for now
