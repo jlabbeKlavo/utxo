@@ -54,7 +54,7 @@ export function verify(input: VerifyInput): boolean {
 }
 
 export function generateNewEncryptionKey(keyName: string): void {
-    const key = Crypto.AES.generateKey(keyName);
+    const key = Crypto.ECDSA.generateKey(keyName);
     if (key) {
         emit(`SUCCESS: Key '${keyName}' has been generated`);
     } else {
