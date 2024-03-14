@@ -2,6 +2,7 @@
 // Inspired by OpenZeppelin Contracts (last updated v5.0.0) (token/ERC20/IERC20.sol)
 import {address, amount, index, bytes} from "../../klave/types"
 
+@serializable
 export class UTXO {
     amount : amount;
     owner: address; //hash scp key
@@ -16,6 +17,7 @@ export class UTXO {
     }
 };
 
+@serializable
 export class TxInput {
     id: index;
     signature: bytes;
@@ -26,6 +28,7 @@ export class TxInput {
     }
 };
 
+@serializable
 export class TxOutput {
     amount: amount;
     owner: address;
