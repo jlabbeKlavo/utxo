@@ -114,9 +114,10 @@ export class ERC20UTXO extends IERC20UTXOEvents implements IERC20UTXO {
     }
 
     _transfer(amount: amount, input: TxInput, output: TxOutput, creator: address) : TransferOutput {
-        let transferOutput = new TransferOutput(0, 0);
-        let cache = this._utxos[input.id];
-        if (output.amount <= cache.amount) {
+        let transferOutput = new TransferOutput(0, 0);        
+        let cache = this._utxos[input.id-1];
+        emit(`cache: ${cache}`);
+        if (output.amount > cache.amount) {
             revert("ERC20UTXO: transfer amount exceeds utxo amount");
             return transferOutput;
         }
@@ -186,7 +187,7 @@ export class ERC20UTXO extends IERC20UTXOEvents implements IERC20UTXO {
     }
 
     _spend(input: TxInput, spender: address) : void {
-        if (input.id < this._utxos.length) {
+        if (input.id >= this._utxos.length) {
             revert("ERC20UTXO: utxo id out of bound");
             return;
         }
