@@ -187,14 +187,14 @@ export class ERC20UTXO extends IERC20UTXOEvents implements IERC20UTXO {
     }
 
     _spend(input: TxInput, spender: address) : void {
-        if (input.id >= this._utxos.length) {
+        if (input.id > this._utxos.length) {
             revert("ERC20UTXO: utxo id out of bound");
             return;
         }
         let utxo = this._utxos[input.id];
         
-        if(!utxo.spent) {
-            revert("ERC20UTXO: utxo has been spent");
+        if(utxo.spent) {
+            revert("ERC20UTXO: utxo has already been spent");
             return;
         }
 
