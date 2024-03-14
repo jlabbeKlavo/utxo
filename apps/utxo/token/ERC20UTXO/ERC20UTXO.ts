@@ -3,7 +3,7 @@
 import { JSON, Context } from "@klave/sdk"
 import { address, amount, index, bytes, revert, emit } from "../../klave/types"
 import { verify, VerifyInput } from "../../klave/crypto"
-import { Account } from "../../klave/ERC20UTXO/ERC20UTXOStructs"
+import { Account, UTXOBrief } from "../../klave/ERC20UTXO/ERC20UTXOStructs"
 import { IERC20UTXO, UTXO, TxInput, TxOutput } from "./IERC20UTXO"
 import { IERC20UTXOEvents } from "../../interfaces/ERC20Events";
 
@@ -216,7 +216,8 @@ export class ERC20UTXO extends IERC20UTXOEvents implements IERC20UTXO {
     _afterCreate(owner: address, utxo: UTXO, id: index) : void {
         let index = this.findAccount(owner);
         if (index != -1) {
-            this._accounts[index].addToUTXOList(id, utxo.amount);
+            this._accounts[index].utxoList.push(new UTXOBrief(id, utxo.amount));
+            emit(`UTXO for ${owner} successfully added to account`);
         }
     }
 
@@ -225,7 +226,8 @@ export class ERC20UTXO extends IERC20UTXOEvents implements IERC20UTXO {
     _afterSpend(spender: address, utxo: UTXO, id: index) : void {
         let index = this.findAccount(spender);
         if (index != -1) {
-            this._accounts[index].removeFromUTXOList(id);
+            this._accounts[index].utxoList.splice(id, 1);
+            emit(`UTXO for ${spender} successfully removed from account`);
         }
     }
     

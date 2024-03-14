@@ -2,7 +2,7 @@ import {JSON} from "@klave/sdk"
 import {address, amount, index} from "../types"
 
 @serializable
-export class UTXO {
+export class UTXOBrief {
     id: index;
     value: amount;
 
@@ -16,12 +16,12 @@ export class UTXO {
 export class Account {
     owner: address;
     balance: amount;
-    utxoList: Array<UTXO>;
+    utxoList: Array<UTXOBrief>;
 
     constructor(owner: address, balance: amount) {
         this.owner = owner;
         this.balance = balance;
-        this.utxoList = new Array<UTXO>();
+        this.utxoList = new Array<UTXOBrief>();
     }
 
     findUTXO(id: index): index {
@@ -36,7 +36,7 @@ export class Account {
     addToUTXOList(id: index, value: amount): void {
         let index = this.findUTXO(id);
         if (index != -1) {
-            this.utxoList.push(new UTXO(id, value));
+            this.utxoList.push(new UTXOBrief(id, value));
         }
     }
 
