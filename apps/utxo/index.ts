@@ -62,6 +62,9 @@ export function reset(): void {
  *  */
 export function name(): void {    
     let erc20utxo = _loadERC20UTXO();
+    if (erc20utxo.name().length == 0) {
+        return;
+    }
     emit(`Name is ${erc20utxo.name()}`);    
 }
 
@@ -70,6 +73,9 @@ export function name(): void {
  *  */
 export function symbol(): void {    
     let erc20utxo = _loadERC20UTXO();
+    if (erc20utxo.name().length == 0) {
+        return;
+    }
     emit(`Symbol is ${erc20utxo.symbol()}`);    
 }
 
@@ -78,6 +84,9 @@ export function symbol(): void {
  *  */
 export function decimals(): void {    
     let erc20utxo = _loadERC20UTXO();
+    if (erc20utxo.name().length == 0) {
+        return;
+    }
     emit(`Symbol is ${erc20utxo.decimals()}`);    
 }
 
@@ -86,6 +95,9 @@ export function decimals(): void {
  *  */
 export function totalSupply(): void {    
     let erc20utxo = _loadERC20UTXO();
+    if (erc20utxo.name().length == 0) {
+        return;
+    }
     emit(`Total Supply is ${erc20utxo.totalSupply()}`);    
 }
 
